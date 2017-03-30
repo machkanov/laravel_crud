@@ -22,15 +22,15 @@ class Search extends Model
             $newDate = date('Y-m-d');
         }
         
-        $search = DB::select( 
+        $query = DB::select( 
                     DB::raw("SELECT * FROM `order` "
-                            . " LEFT JOIN user ON user.id = order.user_id"
-                            . " LEFT JOIN product ON product.id = order.product_id"
-                            . " WHERE (user.name LIKE '%$search%' OR product.product LIKE '%$search%') "
-                            . " AND order.created_at >= '$newDate 00:00:00'"));
-    echo "<br/>"."";
+						. " LEFT JOIN user ON user.id = order.user_id"
+						. " LEFT JOIN product ON product.id = order.product_id"
+						. " WHERE (user.name LIKE '%" . $search . "%' OR product.product LIKE '%" . $search . "%') "
+						. " AND order.created_at >= '". $newDate . "00:00:00'")
+				);
         
-        return $search;
+        return $query;
         
     }
 }

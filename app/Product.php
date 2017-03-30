@@ -14,9 +14,9 @@ class Product extends Model
         return $products;
     }
 
-    static public function getProductById($id = 0) {
-        $product = DB::table('product')->where('id', $id)->get();
-        return $product;
+    static public function getProductPriceById( $id = 0 ) {
+        $productPrice = DB::table('product')->where('id', $id)->value('price');
+        return $productPrice;
     }
 
 }

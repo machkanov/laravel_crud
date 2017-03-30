@@ -7,7 +7,7 @@
             <div class="title">Edit order № {{ $orders[0]->order_id }} </div>
 
             @if(Session::has('msg'))
-            <p class="alert alert-info">{{Session::get('msg')}}</p>
+				<p class="alert alert-info">{{Session::get('msg')}}</p>
             @endif
             <div class="row">
                 <div class="left_col">User</div>
@@ -21,14 +21,11 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <?php
-                if (isset($errors->user)) {
-                    echo '<div class="right_col">';
-                    echo '<div class="alert alert-danger">Please choose User!</div>';
-                    echo '</div>';
-                }
-                ?>
-
+                @if(isset($errors->user))
+                    <div class="right_col long">
+						<div class="alert alert-danger">Please choose User!</div>
+                    </div>
+                @endif
             </div>
             <div class="row">
                 <div class="left_col">Product</div>
@@ -42,30 +39,22 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-
-                <?php
-                if (isset($errors->product)) {
-                    echo '<div class="right_col">';
-                    echo '<div class="alert alert-danger">Please choose User!</div>';
-                    echo '</div>';
-                }
-                ?>
-
+                @if(isset($errors->product))
+                    <div class="right_col long">
+						<div class="alert alert-danger">Please choose Product!</div>
+                    </div>
+                @endif			
             </div>
             <div class="row">
                 <div class="left_col">Quantity</div>
                 <div class="right_col">
-
                     <input name="quantity" type="number" value="<?php echo $orders[0]->quantity ?>"/>
                 </div>
-
-                <?php
-                if (isset($errors->quantity)) {
-                    echo '<div class="right_col">';
-                    echo '<div class="alert alert-danger">Please choose User!</div>';
-                    echo '</div>';
-                }
-                ?>
+                @if(isset($errors->quantity))
+                    <div class="right_col long">
+						<div class="alert alert-danger">Please choose Quantity!</div>
+                    </div>
+                @endif
 
             </div>
             <div class="row">
@@ -81,10 +70,5 @@
 
         </form>
     </div>
-
-
-
-
-
 </div>
 @endsection

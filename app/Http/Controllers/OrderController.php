@@ -45,36 +45,26 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
-        $validation = Validator::make(
-                        array(
-                            'user' => $request->user,
-                            'product' => $request->product,
-                            'quantity' => $request->quantity,
-                        ), array(
-                            'user' => array('required', 'integer', 'min:1'),
-                            'product' => array('required', 'integer', 'min:1'),
-                            'quantity' => array('required', 'integer', 'min:1'),
-                        )
-        );
+		
+        $validation = Validator::make($request->all(), [
+			'user' => 'required|integer|min:1',
+			'product' => 'required|integer|min:1',
+			'quantity' => 'required|integer|min:1'
+        ]);
         
         $errors = [];
         if ($validation->fails()) {
             $errors = $validation->messages();
+            return redirect('orders')->with('errors', json_decode($validation->messages()));
         }
-
+		
         $user = filter_var($request->user, FILTER_SANITIZE_NUMBER_INT);
         $product = filter_var($request->product, FILTER_SANITIZE_NUMBER_INT);
         $quantity = filter_var($request->quantity, FILTER_SANITIZE_NUMBER_INT);
 
-        if ($validation->fails()) {
-            return redirect('orders')->with('errors', json_decode($validation->messages()));
-        }
-
-        $productPrice = Product::getProductById($product);
-
-        $bought_for = $productPrice[0]->price;
+        $productPrice = Product::getProductPriceById($product);
         
-        $total = $quantity * $productPrice[0]->price;
+        $total = $quantity * $productPrice;
 
         if ($product == 2 && $quantity >= 3) {
             $total *= 0.8;
@@ -83,17 +73,16 @@ class OrderController extends Controller
         $data = [
             'user_id' => $user,
             'product_id' => $product,
-            'user_id' => $user,
             'quantity' => $quantity,
             'total' => $total,
-            'bought_for' => $bought_for
+            'bought_for' => $productPrice
         ];
 
-        $order = new Order();
-        $order->newOrder($data);
-        
-        session()->flash('msg',  'Order successfully added!');
-        return redirect('orders');
+        $order = new Order();		
+		$order->newOrder($data);		
+		session()->flash('msg',  'Order successfully added!');
+		
+		return redirect('orders');
     }
 
     /**
@@ -108,9 +97,11 @@ class OrderController extends Controller
         $orderEdit = $order->getOrderById($id);
         $users = User::getUsers();
         $products = Product::getProducts();
+		
         if (empty($orderEdit)) {
             return redirect('orders');
         }
+		
         $data = array('orders' => $orderEdit, 'users' => $users, 'products' => $products);
 
         return view("edit")->with($data);
@@ -125,49 +116,41 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id) {
 
-        $validation = Validator::make(
-                        array(
-                    'user' => $request->user,
-                    'product' => $request->product,
-                    'quantity' => $request->quantity,
-                        ), array(
-                    'user' => array('required', 'integer', 'min:1'),
-                    'product' => array('required', 'integer', 'min:1'),
-                    'quantity' => array('required', 'integer', 'min:1'),
-                        )
-        );
+        $validation = Validator::make($request->all(), [
+			'user' => 'required|integer|min:1',
+			'product' => 'required|integer|min:1',
+			'quantity' => 'required|integer|min:1'
+        ]);
 
         $errors = [];
         if ($validation->fails()) {
             $errors = $validation->messages();
+			return redirect('orders/edit/'. $id)->with('errors', json_decode($validation->messages()));
         }
 
         $user = filter_var($request->user, FILTER_SANITIZE_NUMBER_INT);
         $product = filter_var($request->product, FILTER_SANITIZE_NUMBER_INT);
         $quantity = filter_var($request->quantity, FILTER_SANITIZE_NUMBER_INT);
 
-        $productPrice = Product::getProductById($product);
+        $productPrice = Product::getProductPriceById($product);
+        $total = $quantity * $productPrice;
 
-        $bought_for = $productPrice[0]->price;
-
-        $total = $quantity * $productPrice[0]->price;
-
-        if ($product == 2 && $quantity >= 3) {
+        if ( $product == 2 && $quantity >= 3 ) {
             $total *= 0.8;
         }
 
         $data = [
             'user_id' => $user,
             'product_id' => $product,
-            'user_id' => $user,
             'quantity' => $quantity,
             'total' => $total,
-            'bought_for' => $bought_for
+            'bought_for' => $productPrice
         ];
 
         $order = new Order();
         $order->updateOrder($data, $id);
         session()->flash('msg_updated', 'Order № '.$id.' updated successfully!');
+		
         return redirect('orders');
     }
 
@@ -177,11 +160,12 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function delete($id) {
+    public function delete( $id ) {
+		
         $order = new Order();
         $orderDelete = $order->getOrderById($id);
 
-        if (empty($orderDelete)) {
+        if ( empty( $orderDelete ) ) {
             return redirect('orders');
         }
 

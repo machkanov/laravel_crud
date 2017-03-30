@@ -19,14 +19,11 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <?php
-                if (isset($errors->user)) {
-                    echo '<div class="right_col">';
-                    echo '<div class="alert alert-danger">Please choose User!</div>';
-                    echo '</div>';
-                }
-                ?>
-
+				@if(isset($errors->user))
+                    <div class="right_col long">
+						<div class="alert alert-danger">Please choose User!</div>
+                    </div>
+                @endif
             </div>
             <div class="row">
                 <div class="left_col">Product</div>
@@ -40,15 +37,11 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-
-                <?php
-                if (isset($errors->product)) {
-                    echo '<div class="right_col">';
-                    echo '<div class="alert alert-danger">Please choose Product!</div>';
-                    echo '</div>';
-                }
-                ?>
-
+				@if(isset($errors->product))
+                    <div class="right_col long">
+						<div class="alert alert-danger">Please choose Product!</div>
+                    </div>
+                @endif
             </div>
             <div class="row">
                 <div class="left_col">Quantity</div>
@@ -56,15 +49,11 @@
 
                     <input name="quantity" type="number" value="1"/>
                 </div>
-
-                <?php
-                if (isset($errors->quantity)) {
-                    echo '<div class="right_col">';
-                    echo '<div class="alert alert-danger">Please choose Quantity!</div>';
-                    echo '</div>';
-                }
-                ?>
-
+				@if(isset($errors->quantity))
+                    <div class="right_col long">
+						<div class="alert alert-danger">Please choose Quantity!</div>
+                    </div>
+                @endif
             </div>
             <div class="row">
                 <div class="left_col"></div>
@@ -75,7 +64,7 @@
 
             </div>
             @if(Session::has('msg'))
-            <div class="row alert alert-success m20">{{Session::get('msg')}}</div>
+				<div class="row alert alert-success m20">{{Session::get('msg')}}</div>
             @endif
 
         </form>
@@ -114,13 +103,12 @@
 
     <div class="content padding-20">
 
-
         @if(Session::has('msg_deleted'))
-        <div class="row alert alert-danger m20">{{Session::get('msg_deleted')}}</div>
+			<div class="row alert alert-danger m20">{{Session::get('msg_deleted')}}</div>
         @endif
 
         @if(Session::has('msg_updated'))
-        <div class="row alert alert-success m20">{{Session::get('msg_updated')}}</div>
+			<div class="row alert alert-success m20">{{Session::get('msg_updated')}}</div>
         @endif
         <div class="table-responsive">
             <table class="table table-striped">
@@ -149,7 +137,6 @@
 
                                 <a href="{{ URL::route('delete', $order->order_id) }}" class="btn btn-danger" onclick="confirm('Are you sure you want to delete order № {{$order->order_id}}?')">Delete</a>
                             </td>
-
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
